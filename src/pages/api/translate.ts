@@ -29,7 +29,7 @@ export default async function handler(
       messages: [
         {
           role: "system",
-          content: "You are a lyrics analyzer. Your task is to identify the different sections of a song (verse 1, verse 2, chorus, bridge, etc.) and return their line ranges. Return ONLY valid JSON in this format: {\"sections\": [{\"type\": \"verse\", \"startLine\": 1, \"endLine\": 4}, ...]}. Line numbers are 1-indexed. Each section should be continuous and not overlap with others."
+          content: "You are a lyrics analyzer. Your task is to identify the different sections of a song (verse 1, verse 2, chorus, bridge, etc.) and return their line ranges. Return ONLY valid JSON in this format: {\"sections\": [{\"type\": \"verse 1\", \"startLine\": 1, \"endLine\": 4}, ...]}. Line numbers are 1-indexed. Each section should be continuous and not overlap with others."
         },
         {
           role: "user",

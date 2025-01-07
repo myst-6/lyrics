@@ -1,0 +1,47 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper function to check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Helper function to check if user owns the document
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    // Helper function to validate translation data
+    function isValidTranslation() {
+      let incomingData = request.resource.data;
+      return incomingData.userId is string
+        && incomingData.title is string
+        && incomingData.title.size() > 0
+        && incomingData.title.size() <= 200
+        && incomingData.lyrics is string
+        && incomingData.lyrics.size() <= 3000
+        && incomingData.sections is list
+        && incomingData.sections.size() <= 50
+        && incomingData.timestamp is timestamp;
+    }
+
+    // Rules for translations collection
+    match /translations/{translationId} {
+      // Allow read if user owns the document
+      allow read: if isOwner(resource.data.userId);
+      
+      // Allow create if user is authenticated and data is valid
+      allow create: if isAuthenticated()
+        && isOwner(request.resource.data.userId)
+        && isValidTranslation();
+      
+      // Allow update if user owns the document and data is valid
+      allow update: if isOwner(resource.data.userId)
+        && isValidTranslation();
+      
+      // Allow delete if user owns the document
+      allow delete: if isOwner(resource.data.userId);
+    }
+  }
+} 
